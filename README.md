@@ -11,6 +11,9 @@ Tampermonkey userscripts that automate betting strategies on stake.us casino gam
 i lost my stake account due to state ban in 2025, but u might find me at -
 MoonRoll [moonroll.io/r/index](https://moonroll.io/r/index), Shuffle.us [shuffle.us/?r=index](https://shuffle.us/?r=index), Flip.gg [flip.gg/a/index](https://flip.gg/a/index), and SolCasino [solcasino.io/r/index](https://solcasino.io/r/index). 
 
+<img width="348" height="665" alt="image" src="https://github.com/user-attachments/assets/0e1b0886-85c9-4678-8c88-dc50353658f4" />
+<img width="344" height="635" alt="image" src="https://github.com/user-attachments/assets/6c813f2f-f2d7-4dbb-b26d-1e7873a15090" />
+
 ## disclaimer
 
 these scripts interact with your logged-in session and place real wagers (using your selected method, either GC or SC). they are provided for education and personal use. gambling involves risk of loss. stake’s terms of service may restrict automation; use at your own risk. the author is not responsible for losses, account actions, or API changes. glhf~!
