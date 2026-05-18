@@ -32,15 +32,15 @@ these scripts interact with your logged-in session and place real wagers (using 
 
 ## verify file integrity (SHA-256)
 
-hashes below are for the **exact bytes** of each userscript (v4.0). use them to confirm your copy wasn’t modified in transit or by a third-party mirror. canonical list also lives in [`CHECKSUMS.sha256`](CHECKSUMS.sha256).
+hashes below are for the **exact bytes** of each userscript (v4.0.1). use them to confirm your copy wasn’t modified in transit or by a third-party mirror. canonical list also lives in [`CHECKSUMS.sha256`](CHECKSUMS.sha256).
 
 | file | SHA-256 |
 |------|---------|
-| `k4d-the-moleman-cometh.user.js` | `30100975266cb2a6bfe090e0c3901b0612875980d31a24c1d24457cebc7a2314` |
-| `k4d-keep-rollin.user.js` | `d3a1df3eb8735c7cd63a27bb462effeb5a90cd470144474cf5fe31b392849072` |
-| `k4d-snackpack-blackjack.user.js` | `8e8bdf888b4637798b3ffbb76f967c0006929e6fae82a18a7d8328afa9135f14` |
-| `k4d-plinko-blinko.user.js` | `b7ced1f3b9f1c84e15e007bab51be6aacbf13ac0d25845f3bb96bbaec64e62e1` |
-| `k4d-how-low-can-u.user.js` | `6675b9b3f8d4d494ce157a972df5a33c6343ece29400e06123869c1849c805bb` |
+| `k4d-the-moleman-cometh.user.js` | `c661a9f6d5ccde93dd2c90180ef688074cba850771004856f39aa217af2bf5da` |
+| `k4d-keep-rollin.user.js` | `bae30d2b84eedd7c7dc30de88a0a04e99d0084e20dfec70447cc5782e66598ec` |
+| `k4d-snackpack-blackjack.user.js` | `2aa069cab3fca320963312d3fa4d88e4b2daff0193787bfa8aedb62704bba1dd` |
+| `k4d-plinko-blinko.user.js` | `f87778db3320dfb2998d71b9f6c27b63be422dac41654912561ad0ebcf2ab5d5` |
+| `k4d-how-low-can-u.user.js` | `a81535bfece89175c86472c5df899bd008f4e6c81bf9f92cc6b4a14647ed65ff` |
 
 **important:** hash the file on disk (clone, release zip, or “save as” from github raw). pasting into tampermonkey alone doesn’t give you a stable file to check unless you export/save the script unchanged. line endings (`CRLF` vs `LF`) change the hash — compare against files from this repository, not a re-saved editor buffer with different newlines.
 
@@ -89,7 +89,7 @@ do not run the script. re-download from [github.com/kitty4D/k4d_stake_autoplayer
 | `k4d-plinko-blinko.user.js` | [plinko](https://stake.us/casino/games/plinko) | K4D :: PLINKO BLINKO DONT BE A STINKO |
 | `k4d-how-low-can-u.user.js` | [limbo](https://stake.us/casino/games/limbo) | K4D :: HOW LOW CAN U |
 
-### `k4d-the-moleman-cometh.user.js` — moles (v4.0)
+### `k4d-the-moleman-cometh.user.js` — moles (v4.0.1)
 
 **matches:** `https://stake.us/casino/games/moles*`
 
@@ -132,7 +132,7 @@ auto-plays stake.us **moles**: bet, pick holes for N rounds, cash out when you c
 - stop on $ or % gain/loss vs session start.
 - jitter + occasional long pauses so it doesn’t look like a metronome.
 
-### `k4d-keep-rollin.user.js` — dice (v4.0)
+### `k4d-keep-rollin.user.js` — dice (v4.0.1)
 
 **matches:** `https://stake.us/casino/games/dice*`
 
@@ -167,7 +167,7 @@ auto-plays stake.us **dice**: repeat rolls with win %, roll above/below target, 
 - chance %, direction, bet limits, dynamic chance rules.
 - same session limits, budget, stop gain/loss, pacing as moles.
 
-### `k4d-snackpack-blackjack.user.js` — blackjack (v4.0)
+### `k4d-snackpack-blackjack.user.js` — blackjack (v4.0.1)
 
 **matches:** `https://stake.us/casino/games/blackjack*`
 
@@ -206,7 +206,7 @@ auto-plays stake.us **blackjack**: deal, run your chosen play logic (hit/stand/d
 - stop on gain/loss; jitter between hands.
 - read `PLAY_LOGIC` in source if you want to fork decision trees.
 
-### `k4d-plinko-blinko.user.js` — plinko (v4.0)
+### `k4d-plinko-blinko.user.js` — plinko (v4.0.1)
 
 **matches:** `https://stake.us/casino/games/plinko*`
 
@@ -243,7 +243,7 @@ auto-plays stake.us **plinko**: drop balls with configurable rows (8–16), risk
 - live max-mult display from the baked payout table.
 - same session limits, stop gain/loss, pacing as moles.
 
-### `k4d-how-low-can-u.user.js` — limbo (v4.0)
+### `k4d-how-low-can-u.user.js` — limbo (v4.0.1)
 
 **matches:** `https://stake.us/casino/games/limbo*`
 

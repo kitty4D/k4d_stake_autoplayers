@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         K4D :: HOW LOW CAN U
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      4.0.1
 // @author       K4D
 // @description  Strategy auto-player for Stake.us Limbo. Unobfuscated source — read every line before you run it.
 // @match        https://stake.us/*
@@ -238,7 +238,7 @@
     const icon = document.querySelector('.coin-toggle svg[data-ds-icon]');
     if (icon) {
       const type = icon.getAttribute('data-ds-icon');
-      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'sweepstakes';
+      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'sweeps';
     }
     return 'gold';
   }
@@ -1034,7 +1034,7 @@
   // Platform hard floor — Stake.us rejects bets below this regardless of user settings
   // Currency-dependent platform floor: GC=0.10, SC=0.01 for Originals.
   function getPlatformFloor() {
-    return getCurrency() === 'sweepstakes' ? 0.01 : 0.10;
+    return getCurrency() === 'sweeps' ? 0.01 : 0.10;
   }
 
   function getMinBet() {

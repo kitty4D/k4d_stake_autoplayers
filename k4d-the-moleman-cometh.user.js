@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         K4D :: THE MOLEMAN COMETH
 // @namespace    http://tampermonkey.net/
-// @version      4.0
+// @version      4.0.1
 // @author       K4D
 // @description  Strategy auto-player for Stake.us Moles. Unobfuscated source — read every line before you run it.
 // @match        https://stake.us/*
@@ -240,7 +240,7 @@
     const icon = document.querySelector('.coin-toggle svg[data-ds-icon]');
     if (icon) {
       const type = icon.getAttribute('data-ds-icon');
-      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'sweepstakes';
+      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'sweeps';
     }
     return 'gold';
   }
@@ -1185,7 +1185,7 @@
   //   Gold Coins (GC) — Stake's Originals reject very small bets as "insignificantBet".
   //   Stake Cash (SC, sweepstakes) — floor is 0.01 for all Originals.
   function getPlatformFloor() {
-    return getCurrency() === 'sweepstakes' ? 0.01 : 0.10;
+    return getCurrency() === 'sweeps' ? 0.01 : 0.10;
   }
 
   function getMinBet() {
