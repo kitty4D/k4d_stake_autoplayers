@@ -4,7 +4,7 @@
 // @version      4.0
 // @author       K4D
 // @description  Strategy auto-player for Stake.us Plinko. Unobfuscated source — read every line before you run it.
-// @match        https://stake.us/casino/games/plinko*
+// @match        https://stake.us/*
 // @grant        none
 // @run-at       document-idle
 // ==/UserScript==
@@ -314,7 +314,7 @@
     const icon = document.querySelector('.coin-toggle svg[data-ds-icon]');
     if (icon) {
       const type = icon.getAttribute('data-ds-icon');
-      if (type === 'SWEEPSTAKES' || type === 'SC') return 'sweepstakes';
+      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'sweepstakes';
     }
     return 'gold';
   }
@@ -323,7 +323,7 @@
     const icon = document.querySelector('.coin-toggle svg[data-ds-icon]');
     if (icon) {
       const type = icon.getAttribute('data-ds-icon');
-      if (type === 'SWEEPSTAKES' || type === 'SC') return 'SC (Stake Cash)';
+      if (type === 'SWEEPSTAKES' || type === 'SWEEPS' || type === 'SC') return 'SC (Stake Cash)';
     }
     return 'GC (Gold Coins)';
   }
@@ -509,14 +509,15 @@
 
   function createPanel() {
     const panel = document.createElement('div');
-    panel.id = 'moles-panel';
+    panel.id = 'k4d-auto';
+    panel.dataset.game = 'plinko';
     panel.innerHTML = `
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Anybody:wght@400;700;900&family=Geist+Mono:wght@400;600&display=swap');
         /* K4D palette
            --black:#000000  --cyan:#00E5FF  --magenta:#FF00FF
            --azure:#0070FF  --cream:#FFF9F0  --pink:#FF3399  */
-        #moles-panel {
+        #k4d-auto {
           position: fixed; top: 60px; right: 10px; z-index: 99999;
           width: 360px; background: #000000; border: 1px solid rgba(0,229,255,0.18);
           border-radius: 14px; color: #FFF9F0; font-family: 'Geist Mono', 'SF Mono', monospace;
@@ -527,14 +528,14 @@
             0 0 32px rgba(0,229,255,0.06);
           max-height: 92vh; overflow-y: auto; overflow-x: hidden;
         }
-        #moles-panel::-webkit-scrollbar { width: 4px; }
-        #moles-panel::-webkit-scrollbar-track { background: transparent; }
-        #moles-panel::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 4px; }
-        #moles-panel::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.45); }
-        #moles-panel * { box-sizing: border-box; }
+        #k4d-auto::-webkit-scrollbar { width: 4px; }
+        #k4d-auto::-webkit-scrollbar-track { background: transparent; }
+        #k4d-auto::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 4px; }
+        #k4d-auto::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.45); }
+        #k4d-auto * { box-sizing: border-box; }
 
         /* Header */
-        #moles-panel .mp-hdr {
+        #k4d-auto .mp-hdr {
           background:
             radial-gradient(circle at 20% 0%, rgba(0,112,255,0.25), transparent 60%),
             radial-gradient(circle at 100% 100%, rgba(255,0,255,0.12), transparent 60%),
@@ -545,58 +546,58 @@
           backdrop-filter: blur(12px);
           border-bottom: 1px solid rgba(0,229,255,0.12);
         }
-        #moles-panel .hdr-left {
+        #k4d-auto .hdr-left {
           display: flex; align-items: center; gap: 8px;
         }
-        #moles-panel .hdr-logo {
+        #k4d-auto .hdr-logo {
           width: 38px; height: auto; image-rendering: -webkit-optimize-contrast;
           filter:
             drop-shadow(0 0 4px rgba(0,229,255,0.6))
             drop-shadow(0 0 10px rgba(255,0,255,0.25));
           transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), filter 0.3s;
         }
-        #moles-panel .hdr-logo:hover {
+        #k4d-auto .hdr-logo:hover {
           transform: scale(1.08) rotate(-3deg);
           filter:
             drop-shadow(0 0 6px rgba(0,229,255,0.9))
             drop-shadow(0 0 14px rgba(255,0,255,0.45));
         }
-        #moles-panel .mp-hdr h3 {
+        #k4d-auto .mp-hdr h3 {
           margin: 0; font-family: 'Anybody', sans-serif; font-size: 13px;
           font-weight: 900; color: #00E5FF; letter-spacing: -0.3px;
           text-shadow: 0 0 8px rgba(0,229,255,0.45);
         }
-        #moles-panel .mp-hdr .hdr-sub {
+        #k4d-auto .mp-hdr .hdr-sub {
           font-size: 9px; color: rgba(255,249,240,0.45); margin-top: 1px;
           display: flex; align-items: center; gap: 6px;
         }
-        #moles-panel .mp-hdr .hdr-sub a {
+        #k4d-auto .mp-hdr .hdr-sub a {
           color: #FF00FF; text-decoration: none; transition: all 0.15s;
           text-shadow: 0 0 4px rgba(255,0,255,0.3);
         }
-        #moles-panel .mp-hdr .hdr-sub a:hover {
+        #k4d-auto .mp-hdr .hdr-sub a:hover {
           color: #FF3399; text-shadow: 0 0 8px rgba(255,51,153,0.6);
         }
-        #moles-panel .mp-hdr .hdr-bal {
+        #k4d-auto .mp-hdr .hdr-bal {
           font-size: 10px; color: rgba(255,249,240,0.5); font-weight: 400;
           font-family: 'Geist Mono', monospace; text-align: right;
         }
-        #moles-panel .mp-hdr .hdr-bal strong {
+        #k4d-auto .mp-hdr .hdr-bal strong {
           color: #FFF9F0; font-weight: 600; font-size: 11px; display: block;
         }
-        #moles-panel .mp-body { padding: 8px 10px 10px; }
+        #k4d-auto .mp-body { padding: 8px 10px 10px; }
 
         /* Common controls */
-        #moles-panel .r {
+        #k4d-auto .r {
           display: flex; align-items: center; gap: 4px; margin-bottom: 5px;
           min-width: 0;
         }
-        #moles-panel .r label {
+        #k4d-auto .r label {
           flex: 0 0 50px; font-size: 10px; color: rgba(255,249,240,0.5);
           text-transform: uppercase; letter-spacing: 0.3px; font-weight: 600;
           white-space: nowrap;
         }
-        #moles-panel .r input, #moles-panel .r select {
+        #k4d-auto .r input, #k4d-auto .r select {
           flex: 1 1 0; min-width: 0; width: 100%;
           background: #000000; border: 1px solid rgba(0,229,255,0.18);
           color: #FFF9F0; padding: 4px 6px; border-radius: 5px;
@@ -604,11 +605,11 @@
           font-family: 'Geist Mono', monospace;
           transition: border-color 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s;
         }
-        #moles-panel .r input:focus, #moles-panel .r select:focus {
+        #k4d-auto .r input:focus, #k4d-auto .r select:focus {
           outline: none; border-color: #00E5FF;
           box-shadow: 0 0 0 2px rgba(0,229,255,0.15), 0 0 8px rgba(0,229,255,0.2);
         }
-        #moles-panel .b {
+        #k4d-auto .b {
           padding: 3px 7px; border: 1px solid rgba(0,229,255,0.2); border-radius: 5px;
           cursor: pointer; font-size: 9px; font-weight: 600;
           background: rgba(0,229,255,0.04); color: rgba(255,249,240,0.7);
@@ -616,20 +617,20 @@
           font-family: 'Geist Mono', monospace;
           white-space: nowrap;
         }
-        #moles-panel .b:hover {
+        #k4d-auto .b:hover {
           background: rgba(0,229,255,0.12); color: #FFF9F0; border-color: #00E5FF;
           box-shadow: 0 0 8px rgba(0,229,255,0.2);
         }
-        #moles-panel .b:active { transform: scale(0.96); }
+        #k4d-auto .b:active { transform: scale(0.96); }
 
         /* Strategy grid */
-        #moles-panel .strat-grid {
+        #k4d-auto .strat-grid {
           display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
           margin-bottom: 6px;
         }
 
         /* Axis legend */
-        #moles-panel .axis-legend {
+        #k4d-auto .axis-legend {
           display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
           font-size: 9px; color: rgba(255,249,240,0.55);
           padding: 5px 7px; margin-bottom: 7px;
@@ -637,37 +638,37 @@
           border: 1px solid rgba(0,229,255,0.1);
           border-radius: 5px;
         }
-        #moles-panel .axis-legend .lg-chip {
+        #k4d-auto .axis-legend .lg-chip {
           font-size: 8px; font-weight: 700; width: 14px; height: 14px;
           display: inline-flex; align-items: center; justify-content: center;
           border-radius: 3px; color: #000000;
         }
-        #moles-panel .axis-legend .lg-b { background: #00E5FF; box-shadow: 0 0 4px rgba(0,229,255,0.4); }
-        #moles-panel .axis-legend .lg-d { background: #FF00FF; box-shadow: 0 0 4px rgba(255,0,255,0.4); }
-        #moles-panel .axis-legend .lg-r { background: #FF3399; box-shadow: 0 0 4px rgba(255,51,153,0.4); }
-        #moles-panel .axis-legend .lg-text {
+        #k4d-auto .axis-legend .lg-b { background: #00E5FF; box-shadow: 0 0 4px rgba(0,229,255,0.4); }
+        #k4d-auto .axis-legend .lg-d { background: #FF00FF; box-shadow: 0 0 4px rgba(255,0,255,0.4); }
+        #k4d-auto .axis-legend .lg-r { background: #FF3399; box-shadow: 0 0 4px rgba(255,51,153,0.4); }
+        #k4d-auto .axis-legend .lg-text {
           margin-right: 4px; color: #FFF9F0; font-weight: 600;
         }
-        #moles-panel .axis-legend .lg-hint {
+        #k4d-auto .axis-legend .lg-hint {
           font-size: 8px; color: rgba(255,249,240,0.4);
           font-style: italic;
         }
 
         /* Bet row */
-        #moles-panel .bet-row {
+        #k4d-auto .bet-row {
           display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
           margin-bottom: 8px;
         }
-        #moles-panel .bet-row .r { margin-bottom: 0; }
-        #moles-panel .bet-row label { flex: 0 0 auto; }
+        #k4d-auto .bet-row .r { margin-bottom: 0; }
+        #k4d-auto .bet-row label { flex: 0 0 auto; }
 
         /* Tiny select (single-char $/% etc.) */
-        #moles-panel .r .tiny-sel {
+        #k4d-auto .r .tiny-sel {
           flex: 0 0 38px; min-width: 0; width: 38px; padding-right: 2px;
         }
 
         /* Validation flash — when an input value is auto-corrected */
-        #moles-panel .invalid-flash {
+        #k4d-auto .invalid-flash {
           animation: mp-flash 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
         @keyframes mp-flash {
@@ -681,16 +682,16 @@
           }
         }
 
-        #moles-panel .strat-card {
+        #k4d-auto .strat-card {
           background: #000000; border: 1px solid rgba(0,229,255,0.15);
           border-radius: 8px; padding: 7px 8px; cursor: pointer; position: relative;
           transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s cubic-bezier(0.25,1,0.5,1);
         }
-        #moles-panel .strat-card:hover {
+        #k4d-auto .strat-card:hover {
           border-color: rgba(0,229,255,0.4); transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 0 16px rgba(0,229,255,0.08);
         }
-        #moles-panel .strat-card.selected {
+        #k4d-auto .strat-card.selected {
           border-color: #00E5FF;
           background: linear-gradient(135deg, rgba(0,112,255,0.15) 0%, rgba(0,0,0,0.2) 100%);
           box-shadow:
@@ -698,76 +699,76 @@
             0 4px 16px rgba(0,229,255,0.15),
             inset 0 0 20px rgba(0,229,255,0.05);
         }
-        #moles-panel .strat-card-top {
+        #k4d-auto .strat-card-top {
           display: flex; justify-content: space-between; align-items: center;
         }
-        #moles-panel .strat-card-name {
+        #k4d-auto .strat-card-name {
           font-size: 10px; font-weight: 700; color: #FFF9F0;
           font-family: 'Anybody', sans-serif;
         }
-        #moles-panel .strat-card-tag {
+        #k4d-auto .strat-card-tag {
           font-size: 7px; color: #FF00FF; font-weight: 700;
           background: rgba(255,0,255,0.12); border-radius: 3px;
           padding: 1px 4px; letter-spacing: 0.5px;
           text-shadow: 0 0 3px rgba(255,0,255,0.4);
         }
-        #moles-panel .strat-card-desc {
+        #k4d-auto .strat-card-desc {
           font-size: 8px; color: rgba(255,249,240,0.5); margin: 3px 0 4px; line-height: 1.3;
         }
-        #moles-panel .strat-card-axes {
+        #k4d-auto .strat-card-axes {
           display: flex; gap: 3px;
         }
-        #moles-panel .axis-pill {
+        #k4d-auto .axis-pill {
           font-size: 8px; font-weight: 700; width: 16px; height: 14px;
           display: flex; align-items: center; justify-content: center;
           border-radius: 3px; cursor: pointer;
           transition: all 0.15s;
           user-select: none;
         }
-        #moles-panel .axis-pill.on { color: #000000; }
-        #moles-panel .axis-pill.off {
+        #k4d-auto .axis-pill.on { color: #000000; }
+        #k4d-auto .axis-pill.off {
           background: rgba(255,249,240,0.06); color: rgba(255,249,240,0.3);
         }
-        #moles-panel .axis-pill.axis-b.on {
+        #k4d-auto .axis-pill.axis-b.on {
           background: #00E5FF; box-shadow: 0 0 6px rgba(0,229,255,0.5);
         }
-        #moles-panel .axis-pill.axis-d.on {
+        #k4d-auto .axis-pill.axis-d.on {
           background: #FF00FF; box-shadow: 0 0 6px rgba(255,0,255,0.5);
         }
-        #moles-panel .axis-pill.axis-r.on {
+        #k4d-auto .axis-pill.axis-r.on {
           background: #FF3399; box-shadow: 0 0 6px rgba(255,51,153,0.5);
         }
-        #moles-panel .axis-pill:hover { transform: scale(1.15); }
+        #k4d-auto .axis-pill:hover { transform: scale(1.15); }
 
         /* Card expand on hover */
-        #moles-panel .strat-card-expand {
+        #k4d-auto .strat-card-expand {
           max-height: 0; overflow: hidden; opacity: 0;
           transition: max-height 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease;
           margin-top: 0;
         }
-        #moles-panel .strat-card:hover .strat-card-expand {
+        #k4d-auto .strat-card:hover .strat-card-expand {
           max-height: 60px; opacity: 1; margin-top: 5px;
         }
-        #moles-panel .strat-sim {
+        #k4d-auto .strat-sim {
           display: flex; align-items: flex-end; gap: 3px;
           height: 38px; padding: 2px 0;
         }
-        #moles-panel .strat-nums {
+        #k4d-auto .strat-nums {
           display: flex; gap: 6px; font-size: 8px; color: rgba(255,249,240,0.45);
           margin-top: 2px;
         }
 
         /* Play button */
-        #moles-panel .play-btn {
+        #k4d-auto .play-btn {
           width: 100%; padding: 9px; font-size: 12px; font-weight: 700;
           border-radius: 8px; border: none; cursor: pointer;
           font-family: 'Anybody', sans-serif; letter-spacing: 1px;
           text-transform: uppercase;
           transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s;
         }
-        #moles-panel .play-btn:hover { transform: translateY(-1px); }
-        #moles-panel .play-btn:active { transform: translateY(1px) scale(0.98); }
-        #moles-panel .play-go {
+        #k4d-auto .play-btn:hover { transform: translateY(-1px); }
+        #k4d-auto .play-btn:active { transform: translateY(1px) scale(0.98); }
+        #k4d-auto .play-go {
           background: linear-gradient(135deg, #00E5FF 0%, #0070FF 100%);
           color: #000000;
           box-shadow:
@@ -776,13 +777,13 @@
             inset 0 1px 0 rgba(255,255,255,0.3);
           text-shadow: 0 1px 0 rgba(255,255,255,0.2);
         }
-        #moles-panel .play-go:hover {
+        #k4d-auto .play-go:hover {
           box-shadow:
             0 6px 24px rgba(0,229,255,0.55),
             0 0 0 1px rgba(0,229,255,0.6),
             inset 0 1px 0 rgba(255,255,255,0.4);
         }
-        #moles-panel .play-stop {
+        #k4d-auto .play-stop {
           background: linear-gradient(135deg, #FF00FF 0%, #FF3399 100%);
           color: #FFF9F0;
           box-shadow:
@@ -793,22 +794,22 @@
         }
 
         /* Sections */
-        #moles-panel .s { padding-top: 6px; margin-top: 6px; }
-        #moles-panel .s + .s { border-top: 1px solid rgba(0,229,255,0.06); }
-        #moles-panel .st {
+        #k4d-auto .s { padding-top: 6px; margin-top: 6px; }
+        #k4d-auto .s + .s { border-top: 1px solid rgba(0,229,255,0.06); }
+        #k4d-auto .st {
           font-size: 9px; color: #00E5FF; font-weight: 700; margin-bottom: 4px;
           text-transform: uppercase; letter-spacing: 1.2px;
           font-family: 'Anybody', sans-serif;
           text-shadow: 0 0 6px rgba(0,229,255,0.35);
         }
-        #moles-panel .g2 {
+        #k4d-auto .g2 {
           display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
         }
-        #moles-panel .g2 .r { margin-bottom: 0; }
-        #moles-panel .g2 .r label { flex: 0 0 auto; min-width: 0; }
+        #k4d-auto .g2 .r { margin-bottom: 0; }
+        #k4d-auto .g2 .r label { flex: 0 0 auto; min-width: 0; }
 
         /* Advanced toggle */
-        #moles-panel .adv-toggle {
+        #k4d-auto .adv-toggle {
           width: 100%; background: rgba(0,112,255,0.06);
           border: 1px solid rgba(0,229,255,0.15);
           border-radius: 6px; padding: 5px 10px; cursor: pointer;
@@ -816,44 +817,44 @@
           font-family: 'Geist Mono', monospace; text-align: left;
           transition: all 0.15s; margin-top: 6px;
         }
-        #moles-panel .adv-toggle:hover {
+        #k4d-auto .adv-toggle:hover {
           border-color: #00E5FF; color: #FFF9F0;
           background: rgba(0,229,255,0.08);
           box-shadow: 0 0 8px rgba(0,229,255,0.15);
         }
-        #moles-panel .adv-section {
+        #k4d-auto .adv-section {
           max-height: 0; overflow: hidden; opacity: 0;
           transition: max-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
         }
-        #moles-panel .adv-section.open {
+        #k4d-auto .adv-section.open {
           max-height: 2000px; opacity: 1;
         }
 
         /* Stats & log */
-        #moles-panel .stats-box {
+        #k4d-auto .stats-box {
           background: #000000; border: 1px solid rgba(0,229,255,0.1);
           border-radius: 6px; padding: 6px 8px;
           font-size: 10px; line-height: 1.7;
         }
-        #moles-panel .status {
+        #k4d-auto .status {
           background: #000000; border: 1px solid rgba(0,229,255,0.1);
           border-radius: 5px; padding: 5px 8px;
           font-size: 10px; color: rgba(255,249,240,0.6); margin-top: 5px;
           min-height: 16px; word-break: break-word; line-height: 1.4;
           transition: color 0.3s;
         }
-        #moles-panel .info-row {
+        #k4d-auto .info-row {
           display: flex; justify-content: space-between; font-size: 10px;
           color: rgba(255,249,240,0.5); margin-bottom: 2px;
         }
-        #moles-panel .info-row span:last-child { color: #00E5FF; font-weight: 600; }
-        #moles-panel .log-box {
+        #k4d-auto .info-row span:last-child { color: #00E5FF; font-weight: 600; }
+        #k4d-auto .log-box {
           background: #000000; border: 1px solid rgba(0,229,255,0.1);
           border-radius: 6px; padding: 5px 7px;
           font-size: 9px; line-height: 1.5; max-height: 90px; overflow-y: auto;
           font-family: 'Geist Mono', monospace; color: rgba(255,249,240,0.55);
         }
-        #moles-panel .log-box div {
+        #k4d-auto .log-box div {
           animation: mp-fadein 0.2s cubic-bezier(0.25, 1, 0.5, 1);
         }
         @keyframes mp-fadein {
@@ -862,40 +863,40 @@
         }
 
         /* WL rows */
-        #moles-panel .wl {
+        #k4d-auto .wl {
           display: flex; gap: 3px; align-items: center; flex: 1 1 0; min-width: 0;
         }
-        #moles-panel .wl > select:first-of-type { flex: 1 1 0; min-width: 0; }
-        #moles-panel .wl > input { flex: 0 0 56px; min-width: 0; width: 56px; }
-        #moles-panel .wl > select:last-of-type:not(:first-of-type) {
+        #k4d-auto .wl > select:first-of-type { flex: 1 1 0; min-width: 0; }
+        #k4d-auto .wl > input { flex: 0 0 56px; min-width: 0; width: 56px; }
+        #k4d-auto .wl > select:last-of-type:not(:first-of-type) {
           flex: 0 0 38px; min-width: 0; width: 38px; padding-right: 2px;
         }
-        #moles-panel .wl-row {
+        #k4d-auto .wl-row {
           display: flex; align-items: center; gap: 4px; margin-bottom: 4px;
           min-width: 0;
         }
-        #moles-panel .wl-row .wl-tag {
+        #k4d-auto .wl-row .wl-tag {
           flex: 0 0 30px; font-size: 9px; font-weight: 700;
           text-transform: uppercase; letter-spacing: 0.5px;
         }
-        #moles-panel .wl-row .wl-tag.win {
+        #k4d-auto .wl-row .wl-tag.win {
           color: #00E5FF; text-shadow: 0 0 4px rgba(0,229,255,0.4);
         }
-        #moles-panel .wl-row .wl-tag.loss {
+        #k4d-auto .wl-row .wl-tag.loss {
           color: #FF00FF; text-shadow: 0 0 4px rgba(255,0,255,0.4);
         }
 
-        #moles-panel .cbtn {
+        #k4d-auto .cbtn {
           background: none; border: none; color: rgba(255,249,240,0.4);
           cursor: pointer; font-size: 14px; padding: 2px 6px;
           transition: color 0.15s, text-shadow 0.15s;
         }
-        #moles-panel .cbtn:hover {
+        #k4d-auto .cbtn:hover {
           color: #00E5FF; text-shadow: 0 0 6px rgba(0,229,255,0.5);
         }
 
         /* Footer */
-        #moles-panel .mp-footer {
+        #k4d-auto .mp-footer {
           padding: 6px 10px; border-top: 1px solid rgba(0,229,255,0.08);
           font-size: 8px; color: rgba(255,249,240,0.3);
           text-align: center; line-height: 1.5;
@@ -1380,9 +1381,19 @@
 
   function startPoller() {
     const update = () => {
+      const panel = document.getElementById('k4d-auto');
+      if (!panel || panel.dataset.game !== 'plinko') return;
+      if (!location.pathname.startsWith('/casino/games/plinko')) {
+        panel.remove();
+        return;
+      }
       const bal = getBalance();
       document.getElementById('mp-bal').textContent = bal.toLocaleString('en-US', { minimumFractionDigits: 2 });
       document.getElementById('mp-curr').textContent = getCurrencyLabel();
+      const st = document.getElementById('mp-status');
+      if (st && st.textContent === 'Initializing…' && authHeaders['x-access-token'] && authHeaders['x-lockdown-token']) {
+        st.textContent = 'Ready';
+      }
     };
     update();
     setInterval(update, 2000);
@@ -1691,16 +1702,24 @@
 
   // ── Init ──
   function init() {
-    if (document.getElementById('moles-panel')) return;
+    const existing = document.getElementById('k4d-auto');
+    if (existing) {
+      if (existing.dataset.game === 'plinko') return;
+      existing.remove();
+    }
     createPanel();
     applyPreset();
     // Auth resolution is fired at module load (see readAccessTokenFromCookie /
     // readLockdownTokenFromBundle IIFE above). Nothing else needed here.
   }
 
+  const tryInit = () => {
+    if (location.pathname.startsWith('/casino/games/plinko')) init();
+  };
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', tryInit);
   } else {
-    init();
+    tryInit();
   }
+  setInterval(tryInit, 2000);
 })();

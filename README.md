@@ -27,16 +27,66 @@ these scripts interact with your logged-in session and place real wagers (using 
 2. open the script file you want (see below), copy the full contents, and create a **new script** in Tampermonkey -> paste -> save.
 3. navigate to the correct Stake.us game while logged in. the floating panel should appear after the page loads.
 
+## verify file integrity (SHA-256)
+
+hashes below are for the **exact bytes** of each userscript (v4.0). use them to confirm your copy wasn’t modified in transit or by a third-party mirror. canonical list also lives in [`CHECKSUMS.sha256`](CHECKSUMS.sha256).
+
+| file | SHA-256 |
+|------|---------|
+| `k4d-the-moleman-cometh.user.js` | `30100975266cb2a6bfe090e0c3901b0612875980d31a24c1d24457cebc7a2314` |
+| `k4d-keep-rollin.user.js` | `d3a1df3eb8735c7cd63a27bb462effeb5a90cd470144474cf5fe31b392849072` |
+| `k4d-snackpack-blackjack.user.js` | `8e8bdf888b4637798b3ffbb76f967c0006929e6fae82a18a7d8328afa9135f14` |
+| `k4d-plinko-blinko.user.js` | `b7ced1f3b9f1c84e15e007bab51be6aacbf13ac0d25845f3bb96bbaec64e62e1` |
+| `k4d-how-low-can-u.user.js` | `6675b9b3f8d4d494ce157a972df5a33c6343ece29400e06123869c1849c805bb` |
+
+**important:** hash the file on disk (clone, release zip, or “save as” from github raw). pasting into tampermonkey alone doesn’t give you a stable file to check unless you export/save the script unchanged. line endings (`CRLF` vs `LF`) change the hash — compare against files from this repository, not a re-saved editor buffer with different newlines.
+
+### windows (powershell)
+
+from the repo folder:
+
+```powershell
+Get-FileHash -Algorithm SHA256 .\k4d-keep-rollin.user.js
+```
+
+compare the `Hash` value to the table (case-insensitive). check every script you install:
+
+```powershell
+@(
+  'k4d-the-moleman-cometh.user.js',
+  'k4d-keep-rollin.user.js',
+  'k4d-snackpack-blackjack.user.js',
+  'k4d-plinko-blinko.user.js',
+  'k4d-how-low-can-u.user.js'
+) | ForEach-Object {
+  $h = (Get-FileHash -Algorithm SHA256 $_).Hash.ToLower()
+  [pscustomobject]@{ file = $_; sha256 = $h }
+}
+```
+
+### macOS / linux
+
+```bash
+sha256sum -c CHECKSUMS.sha256
+```
+
+all five scripts should show `OK`; any `FAILED` means do not run that file.
+
+### mismatch?
+
+do not run the script. re-download from [github.com/kitty4D/k4d_stake_autoplayers](https://github.com/kitty4D/k4d_stake_autoplayers) or diff against upstream and report if you think the published hash is wrong.
+
 ## scripts
 
 | file | game | tampermonkey name |
 |------|------|-------------------|
-| `k4d-the-moleman-cometh.js` | [moles](https://stake.us/casino/games/moles) | K4D :: THE MOLEMAN COMETH |
+| `k4d-the-moleman-cometh.user.js` | [moles](https://stake.us/casino/games/moles) | K4D :: THE MOLEMAN COMETH |
 | `k4d-keep-rollin.user.js` | [dice](https://stake.us/casino/games/dice) | K4D :: KEEP ROLLIN ROLLIN ROLLIN ROLLIN |
 | `k4d-snackpack-blackjack.user.js` | [blackjack](https://stake.us/casino/games/blackjack) | K4D :: SNACKPACK BLACKJACK DONT STEP ON CRACK |
 | `k4d-plinko-blinko.user.js` | [plinko](https://stake.us/casino/games/plinko) | K4D :: PLINKO BLINKO DONT BE A STINKO |
+| `k4d-how-low-can-u.user.js` | [limbo](https://stake.us/casino/games/limbo) | K4D :: HOW LOW CAN U |
 
-### `k4d-the-moleman-cometh.js` — moles (v4.0)
+### `k4d-the-moleman-cometh.user.js` — moles (v4.0)
 
 **matches:** `https://stake.us/casino/games/moles*`
 
@@ -189,6 +239,42 @@ auto-plays stake.us **plinko**: drop balls with configurable rows (8–16), risk
 - dynamic risk (`easier` / `harder` steps) and/or dynamic rows (+/− N).
 - live max-mult display from the baked payout table.
 - same session limits, stop gain/loss, pacing as moles.
+
+### `k4d-how-low-can-u.user.js` — limbo (v4.0)
+
+**matches:** `https://stake.us/casino/games/limbo*`
+
+auto-plays stake.us **limbo**: set a target multiplier each round; win when the roll clears it, then adjust bet and/or target from your preset.
+
+#### what it does
+
+- same **K4D** panel pattern as dice (presets, advanced, log).
+- one **API** call per round: `POST /_api/casino/limbo/bet` with `multiplierTarget`, `amount`, `currency`, `identifier`.
+- win chance ≈ `99 / target` (same ~1% house edge framing as dice); displayed in the UI as you change target.
+- **axes:** **B** bet · **M** target multiplier (dynamic nudges on win/loss).
+- same dual-token auth; **GC** / **SC**.
+
+#### strategy presets
+
+| key | label | summary |
+|-----|--------|---------|
+| `flat` | flat 2x | flat bet, target 2.00× |
+| `martingale` | martingale 2x | 2× bet on loss, target 2× |
+| `paroli` | paroli 2x | 2× bet on win |
+| `dalembert` | d'alembert | ±1 unit ($), target 2× |
+| `grinder` | grinder | target 1.10× (~90% hits), +50% on loss |
+| `lotto` | lotto 100x | target 100×, flat bet |
+| `moonShot` | moon shot 1000x | target 1000×, flat bet |
+| `climber` | target climber | dynamic target: up on win, down on loss |
+| `fader` | target fader | dynamic target: down on win, up on loss |
+| `chaseDouble` | chase double | compound bet + target on win, martingale on loss |
+| `custom` | custom | all knobs manual |
+
+#### advanced
+
+- target multiplier min/max, dynamic target rules ($ steps on win/loss).
+- bet limits, budget, max rounds, stop gain/loss.
+- same pacing/jitter as the other scripts.
 
 ---
 
