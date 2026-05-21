@@ -32,10 +32,11 @@ these scripts interact with your logged-in session and place real wagers (using 
 
 ## verify file integrity (SHA-256)
 
-hashes below are for the **exact bytes** of each userscript (v4.0.1). use them to confirm your copy wasn’t modified in transit or by a third-party mirror. canonical list also lives in [`CHECKSUMS.sha256`](CHECKSUMS.sha256).
+hashes below are for the **exact bytes** of each userscript as published in this repo. use them to confirm your copy wasn’t modified in transit or by a third-party mirror. canonical list also lives in [`CHECKSUMS.sha256`](CHECKSUMS.sha256).
 
 | file | SHA-256 |
 |------|---------|
+| `k4d-treat-me-like-a-pirate.user.js` | `65a259e8fe71dfe97feb188a95509c0040e170678971a8b3538a5ed9daffe517` |
 | `k4d-the-moleman-cometh.user.js` | `c661a9f6d5ccde93dd2c90180ef688074cba850771004856f39aa217af2bf5da` |
 | `k4d-keep-rollin.user.js` | `bae30d2b84eedd7c7dc30de88a0a04e99d0084e20dfec70447cc5782e66598ec` |
 | `k4d-snackpack-blackjack.user.js` | `2aa069cab3fca320963312d3fa4d88e4b2daff0193787bfa8aedb62704bba1dd` |
@@ -56,6 +57,7 @@ compare the `Hash` value to the table (case-insensitive). check every script you
 
 ```powershell
 @(
+  'k4d-treat-me-like-a-pirate.user.js',
   'k4d-the-moleman-cometh.user.js',
   'k4d-keep-rollin.user.js',
   'k4d-snackpack-blackjack.user.js',
@@ -73,7 +75,7 @@ compare the `Hash` value to the table (case-insensitive). check every script you
 sha256sum -c CHECKSUMS.sha256
 ```
 
-all five scripts should show `OK`; any `FAILED` means do not run that file.
+all six scripts should show `OK`; any `FAILED` means do not run that file.
 
 ### mismatch?
 
@@ -83,11 +85,28 @@ do not run the script. re-download from [github.com/kitty4D/k4d_stake_autoplayer
 
 | file | game | tampermonkey name |
 |------|------|-------------------|
+| `k4d-treat-me-like-a-pirate.user.js` | site-wide (account) | K4D :: TREAT ME LIKE A PIRATE, GIMME DAT BOOTY |
 | `k4d-the-moleman-cometh.user.js` | [moles](https://stake.us/casino/games/moles) | K4D :: THE MOLEMAN COMETH |
 | `k4d-keep-rollin.user.js` | [dice](https://stake.us/casino/games/dice) | K4D :: KEEP ROLLIN ROLLIN ROLLIN ROLLIN |
 | `k4d-snackpack-blackjack.user.js` | [blackjack](https://stake.us/casino/games/blackjack) | K4D :: SNACKPACK BLACKJACK DONT STEP ON CRACK |
 | `k4d-plinko-blinko.user.js` | [plinko](https://stake.us/casino/games/plinko) | K4D :: PLINKO BLINKO DONT BE A STINKO |
 | `k4d-how-low-can-u.user.js` | [limbo](https://stake.us/casino/games/limbo) | K4D :: HOW LOW CAN U |
+
+### `k4d-treat-me-like-a-pirate.user.js` — account spelunker (v2.6)
+
+**matches:** `https://stake.us/*`
+
+read-only overlay that dumps queryable **User** properties from stake’s GraphQL API — not an autoplayer. click the cat icon in the header (between search and profile) to open the panel.
+
+#### what it does
+
+- draggable **K4D** panel with three tabs: **General** (identity, rank, counts), **Balances** (wallet breakdown, play session, rakeback, unclaimed bonuses, leaderboards), **Flags** (account/KYC/beta flags, permissions, site role taxonomy).
+- `POST /_api/graphql` with a large `user { … }` query; auto-drops fields that error (permission-gated or schema drift).
+- deliberately skips `dob`, `email`, `phoneNumber`, `phoneCountryCode`, and `profile` (address/phone).
+- auth (no manual token paste):
+  - `x-access-token` from `session` cookie (`cookieStore`)
+  - `x-lockdown-token` snooped from stake’s own GraphQL/fetch traffic, with bundle scrape as fallback
+- refresh button re-runs the query; first open waits for auth headers (up to ~30s).
 
 ### `k4d-the-moleman-cometh.user.js` — moles (v4.0.1)
 
